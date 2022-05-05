@@ -1,0 +1,37 @@
+version: "3"
+services:
+  net-db:
+    build:
+      context: .
+      dockerfile: net-db.dockerfile
+    container_name: medi-net-db
+    hostname: net-db
+    ports:
+      - "6543:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: postgres
+    volumes:
+      - net-db-data:/var/lib/postgresql/data
+    networks:
+      - medi
+  net-app:
+    build:
+      context: .
+      dockerfile: net-app.dockerfile
+    container_name: medi-net-app
+    hostname: net-app
+    environment:
+      DOTNET_ENVIRONMENT: Docker
+    depends_on:
+      - net-db
+    networks:
+      - medi
+
+volumes:
+  net-db-data:
+
+networks:
+  medi:
+    name: moodle-external-database-integration
